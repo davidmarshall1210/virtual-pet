@@ -11,17 +11,27 @@
               padding: 32px;
           }
           .pet-name {
-              font-size: 32px;
+              font-size: 50px;
+          }
+          .pet-description {
+              font-size: 25px;
+          }
+          .instructions {
+                font-size: 15px;
+          }
+          .main {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
           }
           .image-area {
               background-color: rgb(100, 148, 170);
-              display: grid;
+              display:grid;
               justify-items: center;
           } 
           .pet-image {
-              height: 500px;
+              height: 600px;
               max-width: 100%;
-              padding: 36px;
+              padding: 32px;
           }
           .interactive-area {
               background-color: rgb(233, 184, 114);
@@ -29,7 +39,12 @@
               align-items: center;
               justify-items: center;
           }
-        
+          .attribution {
+              background-color: rgb(166, 61, 64);
+              padding: 10px;
+              font-size: 12px;
+              display: grid;
+          }
           .activity-row {
               display: grid;
               grid-template-columns: 1fr 1fr 1fr;
@@ -38,8 +53,8 @@
               align-items: center;
           }
           .activity-icon {
-              height: 40px;
-              width: 40px;
+              height: 120px;
+              width: 120px;
           }
           .activity-stat {
               justify-items: center;
@@ -50,19 +65,13 @@
               box-shadow: 0 0 5px 0 grey;
               color: white;
               cursor: pointer;
-              justify-items: right;
+              height: 100%;
+              display:grid;
               justify-items: center;
-              padding: 10%;
+              align-items: center;
+              padding: 0%;
           }
-          .attribution {
-              background-color: rgb(166, 61, 64);
-              padding: 64px;
-              font-size: 12px;
-          }
-          .main {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-          }
+          
           .hidden {
               display: none;
           }
@@ -72,14 +81,15 @@
 
       <div class="header">
           <div class="pet-name">Tina</div>
-          <div class="pet-description">I'm a dynamic little turtle, ready to be your friend!</div>
+          <div class="pet-description">I'm a dynamic little turtle, and very high maintenance!</div>
+          <dic class="instructions"> Click on the activity buttons to keep your pet from passing out </dic>
       </div>
       <div class="main">
-          <div class="image-area">image
-              <img class="pet-image" src='neutral.gif' />
+          <div class="image-area">
+              <img id="pet-image" class ="pet-image" src="neutral.gif" />
           </div>
 
-          <div class="interactive-area">interactive
+          <div class="interactive-area">Activities
             <div id="food-row" class="activity-row">
                   <img class="activity-icon" src = "food.png" />
                   <div id="food-stat" class="activity-stat">50</div>
@@ -88,21 +98,21 @@
                 
                 <div id= "water-row" class="activity-row">
                     <img class="activity-icon" src = "water.png" />
-                    <div id="water-stat" class="activity-stat">100</div>
+                    <div id="water-stat" class="activity-stat">50</div>
                     <div class="activity-button" onclick="giveWater()">Drink Water</div>
                   </div>
                 
                 <div id="exercise-row" class="activity-row">
                     <img class="activity-icon" src = "exercise.png" />
-                    <div id="exercise-stat" class="activity-stat">100</div>
+                    <div id="exercise-stat" class="activity-stat">50</div>
                     <div class="activity-button" onclick="giveExercise()">Eat taco</div>
                   </div>
 
             <div id="end-game" class="end-game hidden">
                 <div class="message">
-                  Your pet has passed out.
+                  Tina has passed out.
                 </div>
-                <div class="activity-button restart-button">
+                <div class="activity-button restart-button" onclick="restart()">
                   Restart
                 </div>
 
@@ -111,13 +121,16 @@
               </div>
           </div>
         </div>
-        <div class="attribution">
-            <div Turtle emotions from https://chinesefontdesign.com></div>
-            <div icons from uclipart.com and clipartmax.com></div>
+        <div class="attribution"> 
+            Turtle emotions from https://chinesefontdesign.com>
+            <p>icons from uclipart.com and clipartmax.com></p>
         </div>
 
   </body>
   <script>
+      
+    var stillAwake  = true
+
       //variables
       var food = 50
       var water = 50
@@ -127,23 +140,23 @@
       //providing
       function giveFood(){
           console.log("feeding")
-          food =+ 15
-          water =- 5
-          exercise =- 5
+          food += 15
+          water -= 5
+          exercise -= 5
           updateHTML()
       }
       function giveWater(){
           console.log("Drinking")
-          food =-2
-          water =+ 15
-          exercise =- 5
+          food -=2
+          water += 15
+          exercise -= 5
           updateHTML()
       }
       function giveExercise(){
           console.log("Exercising")
-          food =- 5
-          water =- 5
-          exercise =+ 15
+          food -= 5
+          water -= 5
+          exercise += 15
           updateHTML()
       }
       //updating variables and picture
@@ -153,10 +166,14 @@
         document.getElementById("exercise-stat").innerHTML = exercise
 
         var lowestStat = Math.min(food, water, exercise)
+        var imageSRC
 
         if (lowestStat <=0) {
             imageSRC = 'passed-out.gif'
-            toggleInteractivity()
+            if (stillAwake) {
+                toggleInteractivity()
+                stillAwake = false
+            }    
         } else if (lowestStat <25) {
             imageSRC = 'tired.gif'
         } else if (lowestStat <50) {
@@ -171,9 +188,9 @@
 
     //aging pet
       function agePet() {
-          water=-8
-          food=-4
-          exercise=-2
+          water-=8
+          food-=4
+          exercise-=2
           updateHTML()
       }
       setInterval(agePet, 2000)
@@ -181,9 +198,18 @@
     //toggling endgame visibility
     function toggleInteractivity() {
         document.getElementById("food-row").classList.toggle("hidden")
-      document.getElementById("water-row").classList.toggle("hidden")
-      document.getElementById("exercise-row").classList.toggle("hidden")
-      document.getElementById("end-game").classList.toggle("hidden")
+        document.getElementById("water-row").classList.toggle("hidden")
+        document.getElementById("exercise-row").classList.toggle("hidden")
+        document.getElementById("end-game").classList.toggle("hidden")
+    }
+
+    function restart() {
+        food = 50
+        water = 50
+        exercise = 50
+        stillAwake = true
+        toggleInteractivity()
+        updateHTML()
     }
 
   </script>
